@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"meme-lord-picker/config"
 	"meme-lord-picker/memelord"
+	"meme-lord-picker/windowrules"
 	"os"
 	"os/exec"
 
@@ -26,6 +28,9 @@ func main() {
 		panic("MEME_PICKER_API_URL is not set")
 	}
 	client := memelord.CreateClient(apiUrl, apiToken)
+
+	windowConfig := config.GetWindowConfig()
+	windowrules.AttemptSetWindowPositionRule()
 
 	qt6.NewQApplication(os.Args)
 
@@ -82,6 +87,9 @@ func main() {
 			qt6.QCoreApplication_Exit()
 		}
 	})
+
+	bridge.SetProperty("windowSize", qt6.NewQVariant22(qt6.NewQSize2(windowConfig.Width, windowConfig.Height)))
+	bridge.SetProperty("imageSize", qt6.NewQVariant22(qt6.NewQSize2(windowConfig.ImageWidth, windowConfig.ImageHeight)))
 
 	engine := qml.NewQQmlApplicationEngine()
 	engine.RootContext().SetContextProperty("bridge", bridge.QObject)

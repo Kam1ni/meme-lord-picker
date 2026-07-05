@@ -3,12 +3,12 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 ApplicationWindow {
-	width: 400
-	height: 400
-	minimumWidth: 400
-	minimumHeight: 400
-	maximumWidth: 400
-	maximumHeight: 400
+	width: bridge.windowSize.width
+	height: bridge.windowSize.height
+	minimumWidth: bridge.windowSize.width
+	minimumHeight: bridge.windowSize.height
+	maximumWidth: bridge.windowSize.width
+	maximumHeight: bridge.windowSize.height
 	visible: true
 	title: "MemeLord Picker"
 
@@ -24,8 +24,8 @@ ApplicationWindow {
 		GridView {
 			Layout.fillWidth: true
 			Layout.fillHeight: true
-			cellWidth: 200
-			cellHeight: 200
+			cellWidth: bridge.imageSize.width
+			cellHeight: bridge.imageSize.height
 			model: memeModel
 
 			delegate: Item {
