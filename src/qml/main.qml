@@ -17,8 +17,9 @@ ApplicationWindow {
 
 		TextField {
 			Layout.fillWidth: true
-			placeholderText: "Search..."
+			placeholderText: "Search (Use # to search by hashtags (comma seperated))"
 			onTextChanged: bridge.searchText = text
+			focus: true
 		}
 
 		GridView {
@@ -27,6 +28,7 @@ ApplicationWindow {
 			cellWidth: bridge.imageSize.width
 			cellHeight: bridge.imageSize.height
 			model: memeModel
+			clip: true
 
 			delegate: Item {
 				width: 200

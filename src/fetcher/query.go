@@ -8,7 +8,8 @@ import (
 
 func stringQueryToMemelordQuery(query string) memelord.Query {
 	result := memelord.Query{
-		PageSize: 100,
+		PageSize:  100,
+		MediaType: memelord.IMAGE,
 	}
 	parts := strings.Split(query, ",")
 	for _, part := range parts {
