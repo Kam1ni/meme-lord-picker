@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"meme-lord-picker/cache"
 	"meme-lord-picker/config"
+	"meme-lord-picker/fetcher"
 	"meme-lord-picker/memelord"
 	"meme-lord-picker/windowrules"
 	"net/url"
@@ -11,6 +12,7 @@ import (
 	"os/exec"
 
 	"github.com/mappu/miqt/qt6"
+	"github.com/mappu/miqt/qt6/mainthread"
 	"github.com/mappu/miqt/qt6/qml"
 )
 
@@ -36,6 +38,15 @@ func main() {
 
 	result := memelord.MemesResponse{}
 	model := qt6.NewQAbstractListModel()
+	fetcher := fetcher.CreateFetcher(client, func(mr memelord.MemesResponse) {
+		mainthread.Start(func() {
+			result = mr
+			model.BeginResetModel()
+			model.EndResetModel()
+		})
+	})
+	fetcher.QueueFetch("")
+
 	model.OnRowCount(func(parent *qt6.QModelIndex) int {
 		return result.Count
 	})
@@ -55,21 +66,7 @@ func main() {
 	bridge.OnValueChanged(func(key string, value *qt6.QVariant) {
 		switch key {
 		case "searchText":
-			fmt.Println("Fetching with title", value.ToString())
-			if value.ToString() == "" {
-				result = memelord.MemesResponse{}
-			} else {
-				var err error
-				result, err = client.FetchMemes(memelord.Query{Title: value.ToString()})
-				if err != nil {
-					fmt.Println("Failed to fetch memes\n", err.Error())
-				} else {
-					fmt.Println(result)
-				}
-			}
-			fmt.Println(result.Count)
-			model.BeginResetModel()
-			model.EndResetModel()
+			fetcher.QueueFetch(value.ToString())
 		case "selectedPath":
 			cmd := exec.Command("wl-copy", value.ToString())
 			cmd.Stdin = nil

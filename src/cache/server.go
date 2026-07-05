@@ -39,7 +39,6 @@ func (c CachingServer) handler(w http.ResponseWriter, req *http.Request) {
 
 	file, err := c.getFileFromCache(url)
 	if err == nil {
-		fmt.Printf("Read %s from cache\n", url)
 		w.WriteHeader(200)
 		w.Write(file)
 		return
