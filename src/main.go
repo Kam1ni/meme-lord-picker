@@ -19,17 +19,12 @@ const (
 )
 
 func main() {
-	apiToken := os.Getenv("MEME_PICKER_API_TOKEN")
-	if apiToken == "" {
-		panic("MEME_PICKER_API_TOKEN is not set")
-	}
-	apiUrl := os.Getenv("MEME_PICKER_API_URL")
-	if apiUrl == "" {
+	config := config.GetConfig()
+	if config.MemeLordApiUrl == "" {
 		panic("MEME_PICKER_API_URL is not set")
 	}
-	client := memelord.CreateClient(apiUrl, apiToken)
+	client := memelord.CreateClient(config.MemeLordApiUrl, config.MemeLordApiToken)
 
-	windowConfig := config.GetWindowConfig()
 	windowrules.AttemptSetWindowPositionRule()
 
 	qt6.NewQApplication(os.Args)
@@ -88,8 +83,8 @@ func main() {
 		}
 	})
 
-	bridge.SetProperty("windowSize", qt6.NewQVariant22(qt6.NewQSize2(windowConfig.Width, windowConfig.Height)))
-	bridge.SetProperty("imageSize", qt6.NewQVariant22(qt6.NewQSize2(windowConfig.ImageWidth, windowConfig.ImageHeight)))
+	bridge.SetProperty("windowSize", qt6.NewQVariant22(qt6.NewQSize2(config.Window.Width, config.Window.Height)))
+	bridge.SetProperty("imageSize", qt6.NewQVariant22(qt6.NewQSize2(config.Window.ImageWidth, config.Window.ImageHeight)))
 
 	engine := qml.NewQQmlApplicationEngine()
 	engine.RootContext().SetContextProperty("bridge", bridge.QObject)

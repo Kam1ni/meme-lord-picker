@@ -8,10 +8,20 @@ type WindowConfig struct {
 }
 
 func GetWindowConfig() WindowConfig {
-	return WindowConfig{
-		Width:       400,
-		Height:      400,
-		ImageWidth:  200,
-		ImageHeight: 200,
+	return loadedConfig.Window
+}
+
+func (w *WindowConfig) enforceLimits() {
+	if w.Width < 10 {
+		w.Width = 10
+	}
+	if w.Height < 10 {
+		w.Height = 10
+	}
+	if w.ImageWidth < 10 {
+		w.ImageWidth = 10
+	}
+	if w.ImageHeight < 10 {
+		w.ImageHeight = 10
 	}
 }

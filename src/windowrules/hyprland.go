@@ -82,12 +82,9 @@ func (h hyprland) adjustPositionBasedOnMonitor(cursorPos position, mon monitor) 
 	if result.X+conf.Width > maxX {
 		result.X = result.X - conf.Width
 	}
-
 	if result.Y+conf.Height > maxY {
 		result.Y = result.Y - conf.Height
 	}
-
-	fmt.Println(cursorPos, result)
 	return result
 }
 
@@ -100,8 +97,6 @@ func (h hyprland) createRule(pos position) error {
 		},
 		move = {%d, %d}
 	})`, _APP_CLASS, pos.X, pos.Y)
-
-	fmt.Println("Creating window rule", ruleCommand)
 
 	cmd := exec.Command("hyprctl", "eval", ruleCommand)
 	cmd.Stderr = output
