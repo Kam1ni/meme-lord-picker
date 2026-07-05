@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=MemeLord Picker
+Comment=Quick image/gif picker for your MemeLord instance
+Exec=/usr/bin/meme-lord-picker
+Icon=meme-lord-picker
+Type=Application
+Category=Utility;Graphics
