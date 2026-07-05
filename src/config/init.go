@@ -34,7 +34,7 @@ func ensureDirExists(dir string) {
 		_, err := os.Stat(currentPath)
 		if err != nil {
 			if os.IsNotExist(err) {
-				err = os.Mkdir(currentPath, os.ModePerm)
+				err = os.Mkdir(currentPath, 0700)
 				if err != nil {
 					panic(fmt.Sprintf("Failed to create directory path %s\n%s", currentPath, err.Error()))
 				}
@@ -57,7 +57,7 @@ func ensureConfigFileExists() {
 		if err != nil {
 			panic(fmt.Sprintf("Failed to create default config json\n%s", err.Error()))
 		}
-		err = os.WriteFile(getConfigFilePath(), defaultConfigJson, os.ModePerm)
+		err = os.WriteFile(getConfigFilePath(), defaultConfigJson, 0600)
 		if err != nil {
 			panic(fmt.Sprintf("Failed to create config file\n%s", err.Error()))
 		}

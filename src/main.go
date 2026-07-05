@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	"meme-lord-picker/cache"
 	"meme-lord-picker/config"
 	"meme-lord-picker/memelord"
 	"meme-lord-picker/windowrules"
+	"net/url"
 	"os"
 	"os/exec"
 
@@ -24,6 +26,9 @@ func main() {
 		panic("MEME_PICKER_API_URL is not set")
 	}
 	client := memelord.CreateClient(config.MemeLordApiUrl, config.MemeLordApiToken)
+	cachingServer := cache.CreateCachingServer()
+	go cachingServer.Run()
+	defer cachingServer.Close()
 
 	windowrules.AttemptSetWindowPositionRule()
 
@@ -35,17 +40,14 @@ func main() {
 		return result.Count
 	})
 	model.OnData(func(index *qt6.QModelIndex, role int) *qt6.QVariant {
-		fmt.Println("ON DATA", index.Row())
 		if !index.IsValid() || index.Row() >= result.Count {
 			return qt6.NewQVariant()
 		}
-		fmt.Println("Running for index", index.Row(), index.Column())
 		m := result.Results[index.Row()]
-		fmt.Println(m.ThubmnailUrl, m.ImageUrl, m.Title)
+		url := fmt.Sprintf("%s?url=%s", cachingServer.GetUrl(), url.QueryEscape(m.ImageUrl))
 		return qt6.NewQVariant20(map[string]qt6.QVariant{
-			"filePreviewUrl": *qt6.NewQVariant14(m.ThubmnailUrl),
-			"fileUrl":        *qt6.NewQVariant14(m.ImageUrl),
-			"name":           *qt6.NewQVariant14(m.Title),
+			"fileUrl": *qt6.NewQVariant14(url),
+			"name":    *qt6.NewQVariant14(m.Title),
 		})
 	})
 
