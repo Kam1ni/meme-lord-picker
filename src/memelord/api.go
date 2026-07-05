@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -24,7 +25,7 @@ func (q Query) toQueryParamets() url.Values {
 		result.Set("title", q.Title)
 	}
 	for _, t := range q.Tags {
-		result.Add("tag", t)
+		result.Add("tag", strings.ReplaceAll(strings.ToLower(t), " ", "-"))
 	}
 	if q.DateFrom != nil {
 		result.Set("date_from", formatDate(*q.DateFrom))
@@ -66,6 +67,7 @@ func (c Client) FetchMemes(query Query) (MemesResponse, error) {
 	if err != nil {
 		return MemesResponse{}, fmt.Errorf("Failed to create http request\n%s", err.Error())
 	}
+	fmt.Println(url)
 	request.Header.Set("Authorization", "Bearer "+c.apiToken)
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
