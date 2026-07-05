@@ -36,7 +36,7 @@ ApplicationWindow {
 					id: img
 					anchors.fill: parent
 					anchors.margins: 4
-					source: model.display.fileUrl
+					source: model.display.localUrl
 					fillMode: Image.PreserveAspectCrop
 					playing: true
 					cache: true

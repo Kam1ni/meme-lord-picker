@@ -6,6 +6,7 @@ import (
 	"meme-lord-picker/config"
 	"meme-lord-picker/fetcher"
 	"meme-lord-picker/memelord"
+	"meme-lord-picker/notify"
 	"meme-lord-picker/windowrules"
 	"net/url"
 	"os"
@@ -57,8 +58,9 @@ func main() {
 		m := result.Results[index.Row()]
 		url := fmt.Sprintf("%s?url=%s", cachingServer.GetUrl(), url.QueryEscape(m.ImageUrl))
 		return qt6.NewQVariant20(map[string]qt6.QVariant{
-			"fileUrl": *qt6.NewQVariant14(url),
-			"name":    *qt6.NewQVariant14(m.Title),
+			"localUrl": *qt6.NewQVariant14(url),
+			"fileUrl":  *qt6.NewQVariant14(m.ImageUrl),
+			"name":     *qt6.NewQVariant14(m.Title),
 		})
 	})
 
@@ -78,6 +80,7 @@ func main() {
 				return
 			}
 			fmt.Println("Coppied to clipboard")
+			notify.Notify("Meme coppied to clipboard", value.ToString())
 			qt6.QCoreApplication_Exit()
 		}
 	})
