@@ -56,6 +56,19 @@ Next time you run meme-lord-picker it will open a window with your memes.
 
 ![Screenshot](./assets/picker.png)
 
+
+## Theming
+You can theme MemeLord Picker to match your environment. Create a theme file next to your config file `~/.config/meme-lord-picker/theme`. It uses the same format as an env file.
+For exmaple a ugly conifg:
+```env
+WINDOW=#FF0000
+TEXT_FIELD=#000000
+TEXT_FIELD_TEXT=#FFFFFF
+TEXT_FIELD_PLACEHOLDER=#00FF00
+TEXT_FIELD_BORDER=#0000FF
+TEXT_FIELD_BORDER_ACTIVE=#FFFFFF
+```
+
 ## Tips
-* Assign a hotkey in your desktop environment to open meme-lord-picker with a press of a button
+* Assign a hotkey in your desktop environment to open meme-lord-picker with a press of a button. Use `pkill -9 meme-lord-picke || meme-lord-picker` as the command so it toggles the picker on repeated presses.
 * If you're not on hyprland, create a window rule with target class meme-lord-picker so that the window creates at your cursors position.

@@ -24,11 +24,11 @@ const (
 )
 
 func main() {
-	config := config.GetConfig()
-	if config.MemeLordApiUrl == "" {
+	conf := config.GetConfig()
+	if conf.MemeLordApiUrl == "" {
 		panic("MEME_PICKER_API_URL is not set")
 	}
-	client := memelord.CreateClient(config.MemeLordApiUrl, config.MemeLordApiToken)
+	client := memelord.CreateClient(conf.MemeLordApiUrl, conf.MemeLordApiToken)
 	cachingServer := cache.CreateCachingServer()
 	go cachingServer.Run()
 	defer cachingServer.Close()
@@ -85,12 +85,17 @@ func main() {
 		}
 	})
 
-	bridge.SetProperty("windowSize", qt6.NewQVariant22(qt6.NewQSize2(config.Window.Width, config.Window.Height)))
-	bridge.SetProperty("imageSize", qt6.NewQVariant22(qt6.NewQSize2(config.Window.ImageWidth, config.Window.ImageHeight)))
+	bridge.SetProperty("windowSize", qt6.NewQVariant22(qt6.NewQSize2(conf.Window.Width, conf.Window.Height)))
+	bridge.SetProperty("imageSize", qt6.NewQVariant22(qt6.NewQSize2(conf.Window.ImageWidth, conf.Window.ImageHeight)))
+
+	theme := config.GetThemeQPallete(qt6.QApplication_Palette(nil))
+	themeMap := qml.NewQQmlPropertyMap()
+	theme.SetQmlProperties(themeMap)
 
 	engine := qml.NewQQmlApplicationEngine()
 	engine.RootContext().SetContextProperty("bridge", bridge.QObject)
 	engine.RootContext().SetContextProperty("memeModel", model.QObject)
+	engine.RootContext().SetContextProperty("theme", themeMap.QObject)
 	engine.Load(qt6.NewQUrl3("qrc:/qml/main.qml"))
 
 	qt6.QApplication_Exec()

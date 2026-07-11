@@ -87,9 +87,6 @@ func (h hyprland) adjustPositionBasedOnMonitor(cursorPos position, mon monitor) 
 	if result.Y+conf.Height > maxY {
 		result.Y = result.Y - conf.Height
 	}
-	fmt.Println("CursorPos", cursorPos)
-	fmt.Println("MonitorPos", mon.X, mon.Y)
-	fmt.Println("Target position", result)
 	return result
 }
 

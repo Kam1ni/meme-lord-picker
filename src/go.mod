@@ -7,4 +7,7 @@ require (
 	github.com/mappu/miqt v0.14.0
 )
 
-require golang.org/x/sys v0.27.0 // indirect
+require (
+	github.com/joho/godotenv v1.5.1 // indirect
+	golang.org/x/sys v0.27.0 // indirect
+)
