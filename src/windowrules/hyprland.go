@@ -26,7 +26,7 @@ func (h hyprland) setWindowPositionRule() {
 
 	targetPosition := h.adjustPositionBasedOnMonitor(cursorPosition, currentMonitor)
 
-	h.createRule(targetPosition)
+	h.createRule(targetPosition, currentMonitor)
 }
 
 func (h hyprland) getCursorPosition() (position, error) {
@@ -37,11 +37,11 @@ func (h hyprland) getCursorPosition() (position, error) {
 	cmd.Stderr = output
 	err := cmd.Run()
 	if err != nil {
-		return position{}, fmt.Errorf("Failed to get cursorposition\n%s\n%s\n", err.Error(), output.String())
+		return position{}, fmt.Errorf("failed to get cursorposition\n%s\n%s", err.Error(), output.String())
 	}
 	err = json.Unmarshal(output.Bytes(), &cp)
 	if err != nil {
-		return position{}, fmt.Errorf("Failed to unmarshal cursorposition\n%s\n%s\n", err.Error(), output.String())
+		return position{}, fmt.Errorf("failed to unmarshal cursorposition\n%s\n%s", err.Error(), output.String())
 	}
 	return cp, nil
 }
@@ -55,12 +55,12 @@ func (h hyprland) getMonitorAtCursor(cp position) (monitor, error) {
 	cmd.Stderr = output
 	err := cmd.Run()
 	if err != nil {
-		return monitor{}, fmt.Errorf("Failed to get monitors\n%s\n%s\n", err.Error(), output.String())
+		return monitor{}, fmt.Errorf("failed to get monitors\n%s\n%s", err.Error(), output.String())
 	}
 
 	err = json.Unmarshal(output.Bytes(), &monitors)
 	if err != nil {
-		return monitor{}, fmt.Errorf("Failed to unmarshal monitors\n%s\n%s\n", err.Error(), output.String())
+		return monitor{}, fmt.Errorf("failed to unmarshal monitors\n%s\n%s", err.Error(), output.String())
 	}
 
 	for _, monitor := range monitors {
@@ -76,34 +76,40 @@ func (h hyprland) getMonitorAtCursor(cp position) (monitor, error) {
 
 func (h hyprland) adjustPositionBasedOnMonitor(cursorPos position, mon monitor) position {
 	conf := config.GetWindowConfig()
+	cursorPos.X -= mon.X
+	cursorPos.Y -= mon.Y
 	result := cursorPos
-	maxX := mon.X + mon.Width
-	maxY := mon.Y + mon.Height
+	maxX := mon.Width
+	maxY := mon.Height
 	if result.X+conf.Width > maxX {
 		result.X = result.X - conf.Width
 	}
 	if result.Y+conf.Height > maxY {
 		result.Y = result.Y - conf.Height
 	}
+	fmt.Println("CursorPos", cursorPos)
+	fmt.Println("MonitorPos", mon.X, mon.Y)
+	fmt.Println("Target position", result)
 	return result
 }
 
-func (h hyprland) createRule(pos position) error {
+func (h hyprland) createRule(pos position, mon monitor) error {
 	output := bytes.NewBuffer(nil)
 	ruleCommand := fmt.Sprintf(`hl.window_rule({
 		name = "MemeLord Picker window position temp rule",
 		match = {
 			class = "^%s$"
 		},
-		move = {%d, %d}
-	})`, _APP_CLASS, pos.X, pos.Y)
+		move = {%d, %d},
+		monitor = %d
+	})`, _APP_CLASS, pos.X, pos.Y, mon.ID)
 
 	cmd := exec.Command("hyprctl", "eval", ruleCommand)
 	cmd.Stderr = output
 	cmd.Stdout = output
 	err := cmd.Run()
 	if err != nil {
-		return fmt.Errorf("Failed to create hyprland window position rule\n%s\n%s\n", err.Error(), output.String())
+		return fmt.Errorf("failed to create hyprland window position rule\n%s\n%s", err.Error(), output.String())
 	}
 	return nil
 }

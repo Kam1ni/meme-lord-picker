@@ -8,6 +8,7 @@ import (
 const _APP_CLASS = "meme-lord-picker"
 
 type monitor struct {
+	ID     int `json:"id"`
 	Width  int `json:"width"`
 	Height int `json:"height"`
 	X      int `json:"x"`
